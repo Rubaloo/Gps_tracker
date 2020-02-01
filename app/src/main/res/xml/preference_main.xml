@@ -27,5 +27,10 @@
         app:key="@string/preference_key_sound_alarm"
         app:title="@string/preference_title_sound_alarm" />
 
+    <Preference app:title="@string/settings_title_save_button"
+        app:key="@string/settings_key_save_button"
+        app:summary="@string/settings_summary_save_button"/>
+
+
 
 </PreferenceScreen>

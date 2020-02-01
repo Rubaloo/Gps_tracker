@@ -1,5 +1,6 @@
 package com.example.ruben.gps_tracker;
 
+import android.app.Activity;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +20,7 @@ import com.example.ruben.gps_tracker.ui.home.HomeFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener {
+public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener, ActivityReceiver {
     private static final String TAG = SMSReceiver.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -31,8 +32,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         mSmsReceiver = new SMSReceiver(this);
         mSmsDeliver = new SMSDeliver(this);
@@ -116,5 +115,15 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
         Log.d(TAG, text);
         Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public Activity getActivity() {
+        return this;
+    }
+
+    @Override
+    public SMSDeliver getSmsDeliver() {
+        return mSmsDeliver;
     }
 }

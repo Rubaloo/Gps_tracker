@@ -41,4 +41,9 @@
     <string name="preference_key_sound_alarm">preference_key_sound_alarm</string>
     <string name="preference_title_sound_alarm">Sound alarm</string>
 
+    <string name="settings_title_save_button">Save button</string>
+    <string name="settings_key_save_button">settings_key_save_button</string>
+    <string name="settings_summary_save_button">Updates gps tracker configuration</string>
+
+    <string name="toast_sending_message">Sending message</string>
 </resources>
