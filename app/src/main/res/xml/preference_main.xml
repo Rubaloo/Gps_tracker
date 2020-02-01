@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:defaultValue="@string/preference_default_tracker_phone_number"
+        app:key="@string/preference_key_tracker_phone_number"
+        app:summary="@string/preference_default_tracker_phone_number"
+        app:title="@string/preference_title_tracker_phone_number"
+        app:useSimpleSummaryProvider="true"/>
+
+   <ListPreference
+        app:defaultValue="2"
+        app:title="@string/preference_title_tracker_mode"
+        app:dialogTitle="@string/preference_title_tracker_mode"
+        app:entries="@array/pref_tracker_mode_entries"
+        app:entryValues="@array/pref_tracker_mode_values"
+        app:key="@string/preference_key_tracker_mode"
+        app:useSimpleSummaryProvider="true"/>
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:key="@string/preference_key_visual_alarm"
+        app:title="@string/preference_title_visual_alarm" />
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:key="@string/preference_key_sound_alarm"
+        app:title="@string/preference_title_sound_alarm" />
+
+
+</PreferenceScreen>

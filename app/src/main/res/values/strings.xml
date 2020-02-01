@@ -27,5 +27,18 @@
     <string name="service_provider_number">+34630119648</string>
     <string name="sms_default_message">Hola papa, soy el Ruben, te ha llegado el sms? estoy haciendo una prueba</string>
 
+    <string name="preference_default_tracker_phone_number">+34630119648</string>
+    <string name="preference_key_tracker_phone_number">preference_key_tracker_phone_number</string>
+    <string name="preference_title_tracker_phone_number">Tracker phone number</string>
+
+    <string name="preference_title_tracker_mode">Tracker mode</string>
+    <string name="preference_key_tracker_mode">preference_key_tracker_mode</string>
+    <string name="preference_summary_tracker_mode">Tracker mode summary</string>
+
+    <string name="preference_key_visual_alarm">preference_key_visual_alarm</string>
+    <string name="preference_title_visual_alarm">Visual alarm</string>
+
+    <string name="preference_key_sound_alarm">preference_key_sound_alarm</string>
+    <string name="preference_title_sound_alarm">Sound alarm</string>
 
 </resources>
