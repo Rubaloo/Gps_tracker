@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class SMSDeliver {
     private static final String TAG = SMSReceiver.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
+    private static final int GT_SMS_MAX_LENGHT = 160;
 
     private String mPhoneNumber;
     private String mMessage;
@@ -27,10 +28,21 @@ public class SMSDeliver {
         mSendSmsPC = new GTPermissionChecker(pActivity, Manifest.permission.SEND_SMS, MY_PERMISSIONS_REQUEST_SEND_SMS);
     }
 
-    public void sendSMSMessage(String phoneNumber, String message)
+    public void sendTextSms(String phoneNumber, String message)
     {
         mPhoneNumber = phoneNumber;
         mMessage = message;
+        if(mSendSmsPC.checkSelfPermission() == GTPermissionChecker.GTPERMISSION_RESULT_GRANTED)
+        {
+            sendSMSMessage();
+        }
+        mSendSmsPC.requestIfNeeded();
+    }
+
+    public void sendGtSms(String pPhoneNumber, GTSms pSms)
+    {
+        mPhoneNumber = pPhoneNumber;
+        mMessage = pSms.getData();
         if(mSendSmsPC.checkSelfPermission() == GTPermissionChecker.GTPERMISSION_RESULT_GRANTED)
         {
             sendSMSMessage();
@@ -108,4 +120,6 @@ public class SMSDeliver {
             sendSMSMessage();
         }
     }
+
+
 }

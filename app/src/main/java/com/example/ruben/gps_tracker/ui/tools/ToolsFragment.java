@@ -9,8 +9,10 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.ruben.gps_tracker.ActivityReceiver;
+import com.example.ruben.gps_tracker.GTSms;
 import com.example.ruben.gps_tracker.R;
 import com.example.ruben.gps_tracker.SMSDeliver;
+import com.example.ruben.gps_tracker.SmsBuilder;
 
 
 public class ToolsFragment extends PreferenceFragmentCompat
@@ -38,13 +40,13 @@ public class ToolsFragment extends PreferenceFragmentCompat
             @Override
             public boolean onPreferenceClick(Preference preference)
             {
-                String deliverPhone = mSmsBuilder.getSmsPhoneFromPreferences();
-                String data = mSmsBuilder.getSmsDataFromPreferences();
-
                 Toast.makeText(getActivity(), R.string.toast_sending_message, Toast.LENGTH_LONG).show();
 
                 SMSDeliver smsDeliver = mActivityReceiver.getSmsDeliver();
-                smsDeliver.sendSMSMessage(deliverPhone, data);
+                String trackerPhone = getString(R.string.preference_key_tracker_phone_number)
+                GTSms sms = mSmsBuilder.getSettingsSms();
+
+                smsDeliver.sendGtSms(trackerPhone, sms);
                 return true;
             }
         });
