@@ -19,11 +19,11 @@ public class SMSDeliver {
     private String mPhoneNumber;
     private String mMessage;
     private GTPermissionChecker mSendSmsPC;
-    private Activity mActivity;
+    private ActivityReceiver mActivityReceiver;
 
     public SMSDeliver(Activity pActivity)
     {
-        mActivity = pActivity;
+        mActivityReceiver = (ActivityReceiver) pActivity;
         mSendSmsPC = new GTPermissionChecker(pActivity, Manifest.permission.SEND_SMS, MY_PERMISSIONS_REQUEST_SEND_SMS);
     }
 
@@ -43,10 +43,10 @@ public class SMSDeliver {
         final String SENT = Intent.ACTION_SENDTO;
         final String DELIVERED = Telephony.Sms.Intents.SMS_DELIVER_ACTION;;
 
-        PendingIntent sentIntent = PendingIntent.getBroadcast(mActivity, 0, new Intent(SENT),0);
-        PendingIntent deliveryIntent = PendingIntent.getBroadcast(mActivity, 0, new Intent(DELIVERED),0);
+        PendingIntent sentIntent = PendingIntent.getBroadcast(mActivityReceiver.getActivity(), 0, new Intent(SENT),0);
+        PendingIntent deliveryIntent = PendingIntent.getBroadcast(mActivityReceiver.getActivity(), 0, new Intent(DELIVERED),0);
 
-        mActivity.registerReceiver(new BroadcastReceiver(){
+        mActivityReceiver.getActivity().registerReceiver(new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent arg1) {
                 String message;
@@ -76,7 +76,7 @@ public class SMSDeliver {
             }
         }, new IntentFilter(SENT));
 
-        mActivity.registerReceiver(new BroadcastReceiver(){
+        mActivityReceiver.getActivity().registerReceiver(new BroadcastReceiver(){
             @Override
             public void onReceive(Context context, Intent arg1) {
                 String message;

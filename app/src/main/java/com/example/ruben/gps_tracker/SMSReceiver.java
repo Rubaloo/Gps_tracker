@@ -17,10 +17,12 @@ public class SMSReceiver extends BroadcastReceiver
     private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 1;
     private Listener listener;
     private GTPermissionChecker mReceiveSMSPC;
+    private ActivityReceiver mActivityReceiver;
 
     public SMSReceiver(Activity pActivity)
     {
-        mReceiveSMSPC = new GTPermissionChecker(pActivity, Manifest.permission.RECEIVE_SMS, MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
+        mActivityReceiver = (ActivityReceiver) pActivity;
+        mReceiveSMSPC = new GTPermissionChecker(mActivityReceiver.getActivity(), Manifest.permission.RECEIVE_SMS, MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
         mReceiveSMSPC.requestIfNeeded();
     }
 

@@ -1,5 +1,6 @@
 package com.example.ruben.gps_tracker.ui.tools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -23,7 +24,7 @@ public class ToolsFragment extends PreferenceFragmentCompat
     {
         super.onAttach(context);
         mActivityReceiver = (ActivityReceiver) context;
-        mSmsBuilder = new SmsBuilder(context);
+        mSmsBuilder = new SmsBuilder((Activity) context);
     }
 
     @Override

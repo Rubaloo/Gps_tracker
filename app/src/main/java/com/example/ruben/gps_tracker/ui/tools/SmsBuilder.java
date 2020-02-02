@@ -1,6 +1,6 @@
 package com.example.ruben.gps_tracker.ui.tools;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
@@ -12,9 +12,9 @@ public class SmsBuilder
 {
     private ActivityReceiver mActivityReceiver;
 
-    public SmsBuilder(Context pCtx)
+    public SmsBuilder(Activity pActivity)
     {
-        mActivityReceiver = (ActivityReceiver) pCtx;
+        mActivityReceiver = (ActivityReceiver) pActivity;
     }
 
     public String getSmsPhoneFromPreferences()
@@ -28,7 +28,7 @@ public class SmsBuilder
         return  deliverPhone;
     }
 
-    public String getSmsDataFromPreferences()
+    public String getSettingsSmsDataFromPreferences()
     {
         String data = "";
 
@@ -43,7 +43,8 @@ public class SmsBuilder
         String soundAlarm = sharedPreferences.getString(prefSoundAlarmKey, "");
         String trackerMode = sharedPreferences.getString(prefTrackerModeKey, "");
 
-        data = visualAlarm + soundAlarm + trackerMode;
+        data = soundAlarm + visualAlarm + trackerMode;
+
         return data;
     }
 }
