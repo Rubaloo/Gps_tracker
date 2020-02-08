@@ -42,7 +42,7 @@ public class SMSDeliver {
     public void sendGtSms(String pPhoneNumber, GTSms pSms)
     {
         mPhoneNumber = pPhoneNumber;
-        mMessage = pSms.getData();
+        mMessage = pSms.toString();
         if(mSendSmsPC.checkSelfPermission() == GTPermissionChecker.GTPERMISSION_RESULT_GRANTED)
         {
             sendSMSMessage();

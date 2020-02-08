@@ -3,10 +3,8 @@ package com.example.ruben.gps_tracker;
 import android.app.Activity;
 import android.graphics.PointF;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -100,9 +98,14 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     @Override
-    public void onTextReceived(String text)
+    public void onSmsReceived(String address, String body)
     {
-        RESTUriParser.ApiRequest ar = mRestUriParser.parse(text);
+        GTSmsFactory fct = new GTSmsFactory();
+        if(address.equals(R.string.preference_key_tracker_phone_number))
+        {
+            fct.getSms(body);
+        }
+        RESTUriParser.ApiRequest ar = mRestUriParser.parse(body);
         PointF geo = mNetApi.getLocation(ar);
 
         HomeFragment homeFrag = (HomeFragment)
@@ -113,8 +116,8 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
             homeFrag.updateMapMarker(geo);
         }
 
-        Log.d(TAG, text);
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+        //Log.d(TAG, text);
+        //Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
     }
 
     @Override

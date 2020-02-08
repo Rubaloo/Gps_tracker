@@ -1,30 +1,31 @@
 package com.example.ruben.gps_tracker;
 
-import android.telephony.SmsMessage;
-
 public class GTSmsFactory
 {
-    public GTSms getSms(SmsMessage pMessage){
 
-        GTSms.SmsCode code = null;
+    public GTSms getSms(String smsBody)
+    {
+        String smsCode = smsBody.substring(GTSmsFormat.Location.Code.ordinal(), GTSmsFormat.Location.Code.ordinal());
+        GTSms.SmsCode code = GTSms.SmsCode.valueOf(smsCode);
+
         if(code == null){
             return null;
         }
         if(code == GTSms.SmsCode.S)
         {
-            return new GTSmsSettings(pMessage);
+            return new GTSmsSettings(smsBody);
         }
         else if(code == GTSms.SmsCode.A)
         {
-            return new GTSmsAlarm(pMessage);
+            return new GTSmsAlarm(smsBody);
         }
         else if(code == GTSms.SmsCode.W)
         {
-            return new GTSmsWarning(pMessage);
+            return new GTSmsWarning(smsBody);
         }
         else if(code == GTSms.SmsCode.R)
         {
-            return new GTSmsRefresh(pMessage);
+            return new GTSmsRefresh(smsBody);
         }
 
         return null;

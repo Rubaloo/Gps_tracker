@@ -5,10 +5,7 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
-import com.example.ruben.gps_tracker.ActivityReceiver;
-import com.example.ruben.gps_tracker.GTSms;
-import com.example.ruben.gps_tracker.R;
-import com.example.ruben.gps_tracker.ui.tools.GTSms;
+import java.sql.Timestamp;
 
 public class SmsBuilder
 {
@@ -21,8 +18,6 @@ public class SmsBuilder
 
     public GTSmsSettings getSettingsSms()
     {
-        GTSmsSettings sms;
-
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(mActivityReceiver.getActivity());
 
@@ -31,13 +26,18 @@ public class SmsBuilder
         String prefSoundAlarmKey =  mActivityReceiver.getActivity().getString(R.string.preference_key_sound_alarm);
         String prefTrackerModeKey =  mActivityReceiver.getActivity().getString(R.string.preference_key_sound_alarm);
 
-        String deliverPhone = sharedPreferences.getString(prefPhoneKey, "");
-        String visualAlarm = sharedPreferences.getString(prefVisualAlarmKey, "");
-        String soundAlarm = sharedPreferences.getString(prefSoundAlarmKey, "");
+        String trackerPhone = sharedPreferences.getString(prefPhoneKey, "");
+        Boolean visualAlarm = sharedPreferences.getBoolean(prefVisualAlarmKey, false);
+        Boolean soundAlarm = sharedPreferences.getBoolean(prefSoundAlarmKey,false);
         String trackerMode = sharedPreferences.getString(prefTrackerModeKey, "");
 
 
+        int time = (int) (System.currentTimeMillis());
+        Timestamp tsTemp = new Timestamp(time);
 
-        return data;
+
+        GTSmsSettings sms = new GTSmsSettings(soundAlarm, visualAlarm, GTSmsSettings.TrackMode.A, trackerPhone, tsTemp);
+
+        return sms;
     }
 }

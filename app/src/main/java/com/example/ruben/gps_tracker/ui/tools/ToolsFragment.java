@@ -43,7 +43,7 @@ public class ToolsFragment extends PreferenceFragmentCompat
                 Toast.makeText(getActivity(), R.string.toast_sending_message, Toast.LENGTH_LONG).show();
 
                 SMSDeliver smsDeliver = mActivityReceiver.getSmsDeliver();
-                String trackerPhone = getString(R.string.preference_key_tracker_phone_number)
+                String trackerPhone = getString(R.string.preference_key_tracker_phone_number);
                 GTSms sms = mSmsBuilder.getSettingsSms();
 
                 smsDeliver.sendGtSms(trackerPhone, sms);

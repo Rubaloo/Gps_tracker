@@ -65,7 +65,7 @@ public class SMSReceiver extends BroadcastReceiver
 
             if (listener != null)
             {
-                listener.onTextReceived(smsBody);
+                listener.onSmsReceived(smsSender, smsBody);
             }
 
         }
@@ -73,7 +73,7 @@ public class SMSReceiver extends BroadcastReceiver
 
     interface Listener
     {
-        void onTextReceived(String text);
+        void onSmsReceived(String sender, String body);
     }
     public void setListener(Listener listener)
     {
