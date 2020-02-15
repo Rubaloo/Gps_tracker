@@ -11,20 +11,25 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SMSReceiver extends BroadcastReceiver
 {
     private static final String TAG = SMSReceiver.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 1;
-    private Listener listener;
+    private List<Listener> mListeners;
     private GTPermissionChecker mReceiveSMSPC;
     private ActivityReceiver mActivityReceiver;
 
     public SMSReceiver(Activity pActivity)
     {
         mActivityReceiver = (ActivityReceiver) pActivity;
+        mListeners = new ArrayList<Listener>();
         mReceiveSMSPC = new GTPermissionChecker(mActivityReceiver.getActivity(), Manifest.permission.RECEIVE_SMS, MY_PERMISSIONS_REQUEST_RECEIVE_SMS);
         mReceiveSMSPC.requestIfNeeded();
     }
+
 
     @Override
     public void onReceive(Context context, Intent intent)
@@ -63,11 +68,7 @@ public class SMSReceiver extends BroadcastReceiver
                 }
             }
 
-            if (listener != null)
-            {
-                listener.onSmsReceived(smsSender, smsBody);
-            }
-
+            for(Listener listener : mListeners) { listener.onSmsReceived(smsSender, smsBody); }
         }
     }
 
@@ -75,8 +76,9 @@ public class SMSReceiver extends BroadcastReceiver
     {
         void onSmsReceived(String sender, String body);
     }
-    public void setListener(Listener listener)
+
+    public boolean addListener(Listener pListener)
     {
-        this.listener = listener;
-    }
+        return mListeners.add(pListener);
+    };
 }

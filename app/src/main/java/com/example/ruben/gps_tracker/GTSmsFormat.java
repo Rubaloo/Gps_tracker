@@ -42,4 +42,9 @@ public class GTSmsFormat {
         Reserved60, Reserved61, Reserved62, Reserved63, Reserved64,
         Size
     };
+
+    static int getIndex(Enum format)
+    {
+        return format.ordinal();
+    }
 }

@@ -1,10 +1,11 @@
 package com.example.ruben.gps_tracker;
 
 import android.app.Activity;
-import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,23 +25,18 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     private SMSDeliver mSmsDeliver;
     private SMSReceiver mSmsReceiver;
-    private MyNetApi mNetApi;
-    private RESTUriParser mRestUriParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mSmsReceiver = new SMSReceiver(this);
-        mSmsDeliver = new SMSDeliver(this);
-        mRestUriParser = new RESTUriParser();
-        mNetApi = new MyNetApi();
+        mSmsReceiver.addListener(this);
 
+        mSmsDeliver = new SMSDeliver(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mSmsReceiver.setListener(this);
 
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -76,6 +72,13 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     @Override
+    protected void onStart()
+    {
+        super.onStart();
+
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -100,33 +103,40 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     @Override
     public void onSmsReceived(String address, String body)
     {
-        GTSmsFactory fct = new GTSmsFactory();
+        GTSms sms = null;
         if(address.equals(R.string.preference_key_tracker_phone_number))
         {
-            fct.getSms(body);
+            GTSmsFactory fct = new GTSmsFactory();
+            sms = fct.getSms(body);
+            dispatch(sms);
         }
-        RESTUriParser.ApiRequest ar = mRestUriParser.parse(body);
-        PointF geo = mNetApi.getLocation(ar);
+        Log.d(TAG, "sms received");
+        Toast.makeText(MainActivity.this, "sms received", Toast.LENGTH_LONG).show();
+    }
 
-        HomeFragment homeFrag = (HomeFragment)
-                getSupportFragmentManager().findFragmentById(R.id.map);
-
-        if (homeFrag != null && geo != null)
+    private void dispatch(GTSms pSms)
+    {
+        if(pSms instanceof GTSmsLocation)
         {
-            homeFrag.updateMapMarker(geo);
-        }
+            HomeFragment homeFrag = (HomeFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.map);
 
-        //Log.d(TAG, text);
-        //Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+            if (homeFrag != null)
+            {
+                homeFrag.updateMap((GTSmsLocation) pSms);
+            }
+        }
     }
 
     @Override
-    public Activity getActivity() {
+    public Activity getActivity()
+    {
         return this;
     }
 
     @Override
-    public SMSDeliver getSmsDeliver() {
+    public SMSDeliver getSmsDeliver()
+    {
         return mSmsDeliver;
     }
 }

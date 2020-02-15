@@ -6,6 +6,8 @@ import android.location.Location;
 import java.sql.Timestamp;
 public class GTSms
 {
+
+
     public enum SmsCode
     {
         L, // Location
@@ -31,6 +33,7 @@ public class GTSms
     {
         return mCode.toString();
     }
+
 }
 
 class GTSmsLocationFormat extends GTSms
@@ -42,6 +45,11 @@ class GTSmsLocationFormat extends GTSms
     private Float mSpeed;
     private String mReserved;
     private Timestamp mTimestamp;
+
+    public Location getLocation1() {
+        return mLocation1;
+    }
+
     private Location mLocation1;
     private Location mLocation2;
     private Location mLocation3;
@@ -51,15 +59,15 @@ class GTSmsLocationFormat extends GTSms
     {
 
         super(pCode);
-        String creditStr = pBody.substring(GTSmsFormat.Location.Credit0.ordinal(), GTSmsFormat.Location.Credit2.ordinal());
-        String batteryStr = pBody.substring(GTSmsFormat.Location.BatteryStatus0.ordinal(), GTSmsFormat.Location.BatteryStatus2.ordinal());
-        String speedStr = pBody.substring(GTSmsFormat.Location.Speed0.ordinal(), GTSmsFormat.Location.Speed2.ordinal());
-        String statusStr = pBody.substring(GTSmsFormat.Location.StatusData0.ordinal(), GTSmsFormat.Location.StatusData2.ordinal());
-        String timestampStr = pBody.substring(GTSmsFormat.Location.Time0.ordinal(), GTSmsFormat.Location.Time9.ordinal());
-        String location1Str = pBody.substring(GTSmsFormat.Location.Location100.ordinal(), GTSmsFormat.Location.Location119.ordinal());
-        String location2Str = pBody.substring(GTSmsFormat.Location.Location200.ordinal(), GTSmsFormat.Location.Location219.ordinal());
-        String location3Str = pBody.substring(GTSmsFormat.Location.Location300.ordinal(), GTSmsFormat.Location.Location319.ordinal());
-        String location4Str = pBody.substring(GTSmsFormat.Location.Location400.ordinal(), GTSmsFormat.Location.Location419.ordinal());
+        String creditStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Credit0), GTSmsFormat.getIndex(GTSmsFormat.Location.Credit2));
+        String batteryStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.BatteryStatus0), GTSmsFormat.getIndex(GTSmsFormat.Location.BatteryStatus2));
+        String speedStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Speed0), GTSmsFormat.getIndex(GTSmsFormat.Location.Speed2));
+        String statusStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.StatusData0), GTSmsFormat.getIndex(GTSmsFormat.Location.StatusData2));
+        String timestampStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Time0), GTSmsFormat.getIndex(GTSmsFormat.Location.Time9));
+        String location1Str = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Location100), GTSmsFormat.getIndex(GTSmsFormat.Location.Location119));
+        String location2Str = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Location200), GTSmsFormat.getIndex(GTSmsFormat.Location.Location219));
+        String location3Str = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Location300), GTSmsFormat.getIndex(GTSmsFormat.Location.Location319));
+        String location4Str = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Location.Location400), GTSmsFormat.getIndex(GTSmsFormat.Location.Location419));
 
     }
 
@@ -118,11 +126,11 @@ class GTSmsSettings extends GTSms
     public GTSmsSettings(String pBody) {
 
         super(SmsCode.S);
-        String soundStr = pBody.substring(GTSmsFormat.Settings.SoundAlarm.ordinal(), GTSmsFormat.Settings.SoundAlarm.ordinal());
-        String visualStr = pBody.substring(GTSmsFormat.Settings.VisualAlarm.ordinal(), GTSmsFormat.Settings.VisualAlarm.ordinal());
-        String trackStr = pBody.substring(GTSmsFormat.Settings.AutoTrack.ordinal(), GTSmsFormat.Settings.AutoTrack.ordinal());
-        String phoneNumberStr = pBody.substring(GTSmsFormat.Settings.UserTelephone0.ordinal(), GTSmsFormat.Settings.UserTelephone11.ordinal());
-        String timeStr = pBody.substring(GTSmsFormat.Settings.Time0.ordinal(), GTSmsFormat.Settings.Time9.ordinal());
+        String soundStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Settings.SoundAlarm), GTSmsFormat.getIndex(GTSmsFormat.Settings.SoundAlarm));
+        String visualStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Settings.VisualAlarm), GTSmsFormat.getIndex(GTSmsFormat.Settings.VisualAlarm));
+        String trackStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Settings.AutoTrack), GTSmsFormat.getIndex(GTSmsFormat.Settings.AutoTrack));
+        String phoneNumberStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Settings.UserTelephone0), GTSmsFormat.getIndex(GTSmsFormat.Settings.UserTelephone11));
+        String timeStr = pBody.substring(GTSmsFormat.getIndex(GTSmsFormat.Settings.Time0), GTSmsFormat.getIndex(GTSmsFormat.Settings.Time9));
     }
 
     @Override
@@ -130,11 +138,6 @@ class GTSmsSettings extends GTSms
     {
         return super.toString() + mSoundAlarm.toString() + mVisualAlarm.toString() + mTrackMode.toString() + mPhoneNumber + mTimestamp.toString();
     }
-}
-
-class GTSmsLocation extends GTSmsLocationFormat
-{
-    public GTSmsLocation(String pBody) { super(SmsCode.L, pBody);}
 }
 
 class GTSmsRefresh extends GTSmsLocationFormat
@@ -151,6 +154,7 @@ class GTSmsAlarm extends GTSmsLocationFormat
     {
         super(SmsCode.A, pBody);
     }
+
 }
 
 class GTSmsWarning extends GTSmsLocationFormat

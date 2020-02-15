@@ -9,7 +9,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
+import com.example.ruben.gps_tracker.GTSmsLocation;
 import com.example.ruben.gps_tracker.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -21,11 +24,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
+    private HomeViewModel mHomeViewModel;
     private static final String TAG = HomeFragment.class.getSimpleName();
 
-    public void updateMapMarker(PointF geo)
+    public void updateMap(GTSmsLocation pLocation)
     {
-        Log.d(TAG, "updateMapMarker");
+        pLocation.getLocation1();
+        mHomeViewModel.setTrackerPosition(new PointF(0,0));
+        Log.d(TAG, "updateMap");
     }
 
     @Override
@@ -35,8 +41,18 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
+                             ViewGroup container, Bundle savedInstanceState)
+    {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        mHomeViewModel.getTrackerPosition().observe(this, new Observer<PointF>() {
+            @Override
+            public void onChanged(PointF pointF)
+            {
+                Log.d(TAG, "updateMapMarker");
+            }
+        });
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         return root;
