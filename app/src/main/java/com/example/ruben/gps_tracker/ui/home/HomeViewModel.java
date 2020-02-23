@@ -2,28 +2,36 @@ package com.example.ruben.gps_tracker.ui.home;
 
 import android.graphics.PointF;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+
+import java.util.List;
 
 public class HomeViewModel extends ViewModel
 {
 
-    private MutableLiveData<PointF> mTrackerPosition;
+    private MutableLiveData<List<PointF>> mTrackerPath = new MutableLiveData<List<PointF>>();
 
     public HomeViewModel()
     {
-        mTrackerPosition = new MutableLiveData<>();
-        mTrackerPosition.setValue(new PointF(0,0));
     }
 
-    public void setTrackerPosition(PointF pTrackerPosition)
+    public void addTrackerSubPath(List<PointF> mTrackerSubPath)
     {
-        mTrackerPosition.setValue(pTrackerPosition);
+        mTrackerPath.getValue().addAll(mTrackerSubPath);
     }
 
-    public LiveData<PointF> getTrackerPosition()
+    public void restartTrackerPath(PointF pStartPosition)
     {
-        return mTrackerPosition;
+        mTrackerPath.getValue().clear();
+        if(pStartPosition != null)
+        {
+            mTrackerPath.getValue().add(pStartPosition);
+        }
+    }
+
+    public List<PointF> getTrackerPath()
+    {
+        return mTrackerPath.getValue();
     }
 }

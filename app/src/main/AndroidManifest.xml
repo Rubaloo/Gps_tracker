@@ -55,6 +55,9 @@
             </intent-filter>
 
         </activity>
+        <provider
+            android:authorities="com.example.android.gpstracker.app"
+            android:name=".data.GpsTrackerProvider" />
     </application>
 
 </manifest>

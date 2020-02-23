@@ -1,6 +1,10 @@
 package com.example.ruben.gps_tracker;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +19,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.ruben.gps_tracker.ui.home.HomeFragment;
+import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -118,14 +122,27 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     {
         if(pSms instanceof GTSmsLocation)
         {
-            HomeFragment homeFrag = (HomeFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.map);
-
-            if (homeFrag != null)
-            {
-                homeFrag.updateMap((GTSmsLocation) pSms);
-            }
+            addLocation((GTSmsLocation) pSms);
         }
+    }
+
+    private void addLocation(GTSmsLocation pSmsLoc)
+    {
+        Location loc = pSmsLoc.getLocation1();
+
+        double lat = loc.getLatitude();
+        double lon = loc.getLongitude();
+
+        //Save new data
+        ContentValues locationValues = new ContentValues();
+        locationValues.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT, String.valueOf(lat));
+        locationValues.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG, String.valueOf(lon));
+
+        // Finally, insert location data into the database.
+        Uri insertedUri = getContentResolver().insert(
+                GpsTrackerContract.LocationEntry.CONTENT_URI,
+                locationValues
+        );
     }
 
     @Override
@@ -138,5 +155,11 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     public SMSDeliver getSmsDeliver()
     {
         return mSmsDeliver;
+    }
+
+    @Override
+    public ContentResolver getContentResolver()
+    {
+        return this.getContentResolver();
     }
 }
