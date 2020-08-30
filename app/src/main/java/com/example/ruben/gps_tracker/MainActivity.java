@@ -34,8 +34,26 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*// Create a Constraints object that defines when the task should run
+        Constraints constraints = new Constraints.Builder()
+                .set
+                .setRequiresCharging(true)
+                .build();
+
+        OneTimeWorkRequest compressionWork =
+                new OneTimeWorkRequest.Builder(CompressWorker.class)
+                        .setConstraints(constraints)
+                        .build();*/
+
         mSmsReceiver = new SMSReceiver(this);
-        mSmsReceiver.addListener(this);
+        try {
+            Log.d(TAG, Boolean.toString(mSmsReceiver.addListener(this)));
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, e.getMessage());
+        }
+
 
         mSmsDeliver = new SMSDeliver(this);
         setContentView(R.layout.activity_main);
@@ -158,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     @Override
-    public ContentResolver getContentResolver()
+    public ContentResolver getCntentResolver()
     {
         return this.getContentResolver();
     }

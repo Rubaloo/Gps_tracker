@@ -25,10 +25,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
@@ -48,13 +46,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     {
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         mHomeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        mHomeViewModel.addTrackerSubPath(getTrackerPathContent());
-        mHomeViewModel.getTrackerPath().observe(this, new Observer<List<PointF>>() {
+        mHomeViewModel.getTrackerPath().observe(this, new Observer<ArrayList<PointF>>() {
             @Override
-            public void onChanged(List<PointF> mPath)
+            public void onChanged(ArrayList<PointF> trackerPath)
             {
-                Log.d(TAG, "updateMapMarker/s");
-                //UpdateMArkers markers from positions
+                Log.d(TAG, "Update map");
+                Log.d(TAG, String.valueOf(trackerPath.size()));
             }
         });
 
@@ -75,58 +72,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onResume()
     {
         super.onResume();
-
         Context ctx = mActivityReceiver.getActivity();
-        ContentResolver cres = ctx.getContentResolver();
-        cres.registerContentObserver(GpsTrackerContract.LocationEntry.CONTENT_URI, false, mObserver = new ContentObserver(null) {
-            @Override
-            public void onChange(boolean self) {
-                mHomeViewModel.restartTrackerPath(null);
-            }
-        });
+        mHomeViewModel.setContentResolver(ctx.getContentResolver());
     }
 
     @Override
     public void onPause()
     {
         super.onPause();
-        Context ctx = mActivityReceiver.getActivity();
-        ContentResolver cres = ctx.getContentResolver();
-        cres.unregisterContentObserver(mObserver);
-
+        mHomeViewModel.unregisterRepoObservers();
     }
 
     @Override
     public void onMapReady(GoogleMap mMap) {
         mMap.clear(); //clear old markers
-        ArrayList<PointF> tckrPath = mHomeViewModel.getTrackerPath();
-
-        for(PointF coord : tckrPath)
-        {
-            mMap.addMarker(new MarkerOptions()
-                    .position(new LatLng(coord.x, coord.y))
-                    .title("Captain America"));
-        }
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-
-
         CameraPosition googlePlex = CameraPosition.builder()
                 .target(new LatLng(37.4219999, -122.0862462))
                 .zoom(10)
                 .bearing(0)
                 .tilt(45)
                 .build();
-
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 10000, null);
-
     }
 
     private ArrayList<PointF> getTrackerPathContent()
     {
         ArrayList<PointF> mCoords = new ArrayList<PointF>();
 
-        ContentResolver cres = mActivityReceiver.getContentResolver();
+        ContentResolver cres = mActivityReceiver.getCntentResolver();
         Cursor cursor = cres.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
 
         int latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT);

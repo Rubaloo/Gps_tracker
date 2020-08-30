@@ -56,8 +56,8 @@
 
         </activity>
         <provider
-            android:authorities="com.example.android.gpstracker.app"
-            android:name=".data.GpsTrackerProvider" />
+            android:name=".data.GpsTrackerProvider"
+            android:authorities="com.example.android.gpstracker.app" />
     </application>
 
 </manifest>

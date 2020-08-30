@@ -1,37 +1,39 @@
 package com.example.ruben.gps_tracker.ui.home;
 
+import android.content.ContentResolver;
 import android.graphics.PointF;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class HomeViewModel extends ViewModel
 {
 
-    private MutableLiveData<List<PointF>> mTrackerPath = new MutableLiveData<List<PointF>>();
+    private MutableLiveData<ArrayList<PointF>> mTrackerPath;
+    private HomeRepository mRepository;
 
     public HomeViewModel()
     {
+        mTrackerPath = new MutableLiveData<ArrayList<PointF>>();
+        mRepository = new HomeRepository();
+        mTrackerPath = mRepository.getTrackerPath();
     }
 
-    public void addTrackerSubPath(List<PointF> mTrackerSubPath)
+    public MutableLiveData<ArrayList<PointF>> getTrackerPath()
     {
-        mTrackerPath.getValue().addAll(mTrackerSubPath);
+        return mTrackerPath;
     }
 
-    public void restartTrackerPath(PointF pStartPosition)
+    public void setContentResolver(ContentResolver pContentResolver)
     {
-        mTrackerPath.getValue().clear();
-        if(pStartPosition != null)
-        {
-            mTrackerPath.getValue().add(pStartPosition);
-        }
+        mRepository.setContentResolver(pContentResolver);
+        mRepository.registerObservers();
     }
 
-    public List<PointF> getTrackerPath()
+    public void unregisterRepoObservers()
     {
-        return mTrackerPath.getValue();
+        mRepository.unregisterObservers();
     }
 }

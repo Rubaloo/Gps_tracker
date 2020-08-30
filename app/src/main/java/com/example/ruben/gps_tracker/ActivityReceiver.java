@@ -7,5 +7,5 @@ public interface ActivityReceiver
 {
     Activity getActivity();
     SMSDeliver getSmsDeliver();
-    ContentResolver getContentResolver();
+    ContentResolver getCntentResolver();
 }

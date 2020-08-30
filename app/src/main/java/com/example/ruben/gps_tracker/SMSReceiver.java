@@ -22,6 +22,11 @@ public class SMSReceiver extends BroadcastReceiver
     private GTPermissionChecker mReceiveSMSPC;
     private ActivityReceiver mActivityReceiver;
 
+    public SMSReceiver()
+    {
+
+    }
+
     public SMSReceiver(Activity pActivity)
     {
         mActivityReceiver = (ActivityReceiver) pActivity;
