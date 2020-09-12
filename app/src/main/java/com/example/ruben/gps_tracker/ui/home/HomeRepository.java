@@ -4,14 +4,17 @@ import android.content.ContentResolver;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.graphics.PointF;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.ruben.gps_tracker.SMSReceiver;
 import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 
 import java.util.ArrayList;
 
 public class HomeRepository {
+    private static final String TAG = SMSReceiver.class.getSimpleName();
     private MutableLiveData<ArrayList<PointF>> mTrackerPath;
     private ContentResolver mCntResolver;
     private ContentObserver mObserver;
@@ -48,7 +51,8 @@ public class HomeRepository {
 
     private void refreshTrackerPath()
     {
-        Cursor cursor = mCntResolver.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
+        Log.d(TAG, "Location updated refresh data");
+        /*Cursor cursor = mCntResolver.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
         ArrayList<PointF> coords = new ArrayList<PointF>();
         int latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT);
         int lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG);
@@ -63,6 +67,6 @@ public class HomeRepository {
             cursor.close();
         }
 
-        mTrackerPath.setValue(coords);
+        mTrackerPath.setValue(coords);*/
     }
 }
