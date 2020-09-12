@@ -1,5 +1,7 @@
 package com.example.ruben.gps_tracker;
 
+import com.example.ruben.gps_tracker.data.GpsTrackerDbHelper;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -26,6 +28,7 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener, ActivityReceiver {
     private static final String TAG = SMSReceiver.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
+    private GpsTrackerDbHelper mDbHelper;
 
     private SMSDeliver mSmsDeliver;
     private SMSReceiver mSmsReceiver;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         /*// Create a Constraints object that defines when the task should run
         Constraints constraints = new Constraints.Builder()
@@ -44,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                 new OneTimeWorkRequest.Builder(CompressWorker.class)
                         .setConstraints(constraints)
                         .build();*/
-
+        mDbHelper = new GpsTrackerDbHelper(this);
+        mDbHelper.getWritableDatabase(); //Force database creation just for test purposes, to be removed in the future
         mSmsReceiver = new SMSReceiver(this);
         try {
             Log.d(TAG, Boolean.toString(mSmsReceiver.addListener(this)));
