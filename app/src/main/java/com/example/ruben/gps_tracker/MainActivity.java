@@ -28,8 +28,6 @@ import com.google.android.material.navigation.NavigationView;
 public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener, ActivityReceiver {
     private static final String TAG = SMSReceiver.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
-    private GpsTrackerDbHelper mDbHelper;
-
     private SMSDeliver mSmsDeliver;
     private SMSReceiver mSmsReceiver;
 
@@ -48,8 +46,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                 new OneTimeWorkRequest.Builder(CompressWorker.class)
                         .setConstraints(constraints)
                         .build();*/
-        mDbHelper = new GpsTrackerDbHelper(this);
-        mDbHelper.getWritableDatabase(); //Force database creation just for test purposes, to be removed in the future
+
         mSmsReceiver = new SMSReceiver(this);
         try {
             Log.d(TAG, Boolean.toString(mSmsReceiver.addListener(this)));

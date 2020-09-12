@@ -3,6 +3,7 @@ package com.example.ruben.gps_tracker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,6 +11,8 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
+
+import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +27,6 @@ public class SMSReceiver extends BroadcastReceiver
 
     public SMSReceiver()
     {
-
     }
 
     public SMSReceiver(Activity pActivity)
@@ -72,8 +74,19 @@ public class SMSReceiver extends BroadcastReceiver
                     smsSender = messages[0].getOriginatingAddress();
                 }
             }
+        }
 
-            for(Listener listener : mListeners) { listener.onSmsReceived(smsSender, smsBody); }
+        //TODO: Parse sms content (by now Default insert when a sms is received)
+        ContentValues cv = new ContentValues(2);
+        cv.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT, 10);
+        cv.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG, 1000);
+
+        try {
+            context.getContentResolver().insert(GpsTrackerContract.LocationEntry.CONTENT_URI, cv);
+        }
+        catch (Exception e)
+        {
+            Log.d(TAG, e.getMessage());
         }
     }
 
