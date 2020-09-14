@@ -14,7 +14,7 @@ import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 import java.util.ArrayList;
 
 public class HomeRepository {
-    private static final String TAG = SMSReceiver.class.getSimpleName();
+    private static final String TAG = HomeRepository.class.getSimpleName();
     private MutableLiveData<ArrayList<PointF>> mTrackerPath;
     private ContentResolver mCntResolver;
     private ContentObserver mObserver;
@@ -52,7 +52,7 @@ public class HomeRepository {
     private void refreshTrackerPath()
     {
         Log.d(TAG, "Location updated refresh data");
-        /*Cursor cursor = mCntResolver.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
+        Cursor cursor = mCntResolver.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
         ArrayList<PointF> coords = new ArrayList<PointF>();
         int latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT);
         int lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG);
@@ -67,6 +67,6 @@ public class HomeRepository {
             cursor.close();
         }
 
-        mTrackerPath.setValue(coords);*/
+        mTrackerPath.postValue(coords);
     }
 }
