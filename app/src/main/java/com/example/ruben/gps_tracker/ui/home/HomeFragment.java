@@ -33,7 +33,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private HomeViewModel mHomeViewModel;
     private static final String TAG = HomeFragment.class.getSimpleName();
     private ActivityReceiver mActivityReceiver;
-    private ContentObserver mObserver;
+    private boolean mTest = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,8 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             {
                 Log.d(TAG, "Update map");
                 Log.d(TAG, String.valueOf(trackerPath.size()));
+                SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+                mapFragment.getMapAsync(HomeFragment.this);
             }
         });
 
@@ -88,11 +90,12 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mMap.clear(); //clear old markers
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         CameraPosition googlePlex = CameraPosition.builder()
-                .target(new LatLng(37.4219999, -122.0862462))
+                .target(new LatLng((mTest) ? 37.4219999 : 10.00000, -122.0862462))
                 .zoom(10)
                 .bearing(0)
                 .tilt(45)
                 .build();
+        mTest = !mTest;
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 10000, null);
     }
 
