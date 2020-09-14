@@ -45,6 +45,7 @@ public class GpsTrackerProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mOpenHelper = new GpsTrackerDbHelper(getContext());
+        sLocationQueryBuilder.setTables(sLocationSelection);
         return true;
     }
 
@@ -74,8 +75,8 @@ public class GpsTrackerProvider extends ContentProvider {
             case LOCATION: {
                 retCursor =  sLocationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                         null,
-                        sLocationSelection,
-                        new String[]{},
+                        null,
+                        null,
                         null,
                         null,
                         null
