@@ -25,6 +25,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 
@@ -89,14 +90,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap mMap) {
         mMap.clear(); //clear old markers
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        CameraPosition googlePlex = CameraPosition.builder()
-                .target(new LatLng((mTest) ? 37.4219999 : 10.00000, -122.0862462))
-                .zoom(10)
-                .bearing(0)
-                .tilt(45)
-                .build();
-        mTest = !mTest;
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 10000, null);
+        ArrayList<PointF> lastPositions = mHomeViewModel.getTrackerPath().getValue();
+        if(lastPositions != null && lastPositions.size() != 0)
+        {
+            for (PointF point : lastPositions)
+            {
+                LatLng pos = new LatLng(point.x, point.y);
+                mMap.addMarker(new MarkerOptions().position(pos)
+                        .title("MArker 1"));
+            }
+
+            PointF cameraFocus = (!lastPositions.isEmpty()) ? lastPositions.get(lastPositions.size() - 1) : new PointF(37.4219999f, -122.0862462f);
+            CameraPosition googlePlex = CameraPosition.builder()
+                    .target(new LatLng(cameraFocus.x, cameraFocus.y))
+                    .zoom(10)
+                    .bearing(0)
+                    .tilt(45)
+                    .build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 10000, null);
+        }
     }
 
     private ArrayList<PointF> getTrackerPathContent()
@@ -106,14 +118,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         ContentResolver cres = mActivityReceiver.getCntentResolver();
         Cursor cursor = cres.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
 
-        int latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT);
-        int lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG);
+        Integer latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT_1);
+        Integer lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG_1);
         try {
             while (cursor.moveToNext())
             {
-                String lat = cursor.getString(latIndx);
-                String lon = cursor.getString(lonIndx);
-                mCoords.add(new PointF(Float.parseFloat(lat), Float.parseFloat(lon)));
+                Integer lat = cursor.getInt(latIndx);
+                Integer lon = cursor.getInt(lonIndx);
+                Log.d(TAG,  "To position: lat: " + lat + " lon:" + lon);
+                Log.d(TAG,  "To position: lat: " + Float.valueOf(lat)/1000000 + " lon:" + Float.valueOf(lon)/1000000);
+                mCoords.add(new PointF(Float.valueOf(lon)/1000000, Float.valueOf(lat)/1000000));
             }
         } finally {
             cursor.close();

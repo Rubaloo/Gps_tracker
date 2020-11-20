@@ -44,11 +44,23 @@ public class GpsTrackerContract
 
         // Table name
         public static final String TABLE_NAME = "location";
+        public static final Integer NUM_COLUMNS = 12;
 
         // In order to uniquely pinpoint the location on the map when we launch the
         // map intent, we store the latitude and longitude as returned by openweathermap.
-        public static final String COLUMN_COORD_LAT = "coord_lat";
-        public static final String COLUMN_COORD_LONG = "coord_long";
+        public static final String COLUMN_STATUS = "status";
+        public static final String COLUMN_CREDIT = "credit";
+        public static final String COLUMN_BATTERY = "battery";
+        public static final String COLUMN_SPEED = "speed";
+        public static final String COLUMN_COORD_LAT_1 = "coord_lat_1";
+        public static final String COLUMN_COORD_LONG_1 = "coord_long_1";
+        public static final String COLUMN_COORD_LAT_2 = "coord_lat_2";
+        public static final String COLUMN_COORD_LONG_2 = "coord_long_2";
+        public static final String COLUMN_COORD_LAT_3 = "coord_lat_3";
+        public static final String COLUMN_COORD_LONG_3 = "coord_long_3";
+        public static final String COLUMN_COORD_LAT_4 = "coord_lat_4";
+        public static final String COLUMN_COORD_LONG_4 = "coord_long_4";
+        public static final String COLUMN_TIMESTAMP = "timestamp";
 
         public static Uri buildLocationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);

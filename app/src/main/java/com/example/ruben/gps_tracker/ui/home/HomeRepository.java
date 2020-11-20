@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.ruben.gps_tracker.SMSReceiver;
 import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 
 import java.util.ArrayList;
@@ -54,14 +53,16 @@ public class HomeRepository {
         Log.d(TAG, "Location updated refresh data");
         Cursor cursor = mCntResolver.query(GpsTrackerContract.LocationEntry.CONTENT_URI, null, null, null, null);
         ArrayList<PointF> coords = new ArrayList<PointF>();
-        int latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT);
-        int lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG);
+        Integer latIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT_1);
+        Integer lonIndx = cursor.getColumnIndex(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG_1);
         try {
             while (cursor.moveToNext())
             {
-                String lat = cursor.getString(latIndx);
-                String lon = cursor.getString(lonIndx);
-                coords.add(new PointF(Float.parseFloat(lat), Float.parseFloat(lon)));
+                Integer lat = cursor.getInt(latIndx);
+                Integer lon = cursor.getInt(lonIndx);
+                Log.d(TAG,  "To position: lat: " + lat + " lon:" + lon);
+                Log.d(TAG,  "To position: lat: " + Float.valueOf(lat)/1000000 + " lon:" + Float.valueOf(lon)/1000000);
+                coords.add(new PointF(Float.valueOf(lon)/1000000, Float.valueOf(lat)/1000000));
             }
         } finally {
             cursor.close();

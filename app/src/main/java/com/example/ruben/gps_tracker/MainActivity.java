@@ -1,10 +1,9 @@
 package com.example.ruben.gps_tracker;
 
-import com.example.ruben.gps_tracker.data.GpsTrackerDbHelper;
-
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.res.Resources;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,11 +24,11 @@ import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements SMSReceiver.Listener, ActivityReceiver {
-    private static final String TAG = SMSReceiver.class.getSimpleName();
+public class MainActivity extends AppCompatActivity implements SmsReceiver.Listener, ActivityReceiver {
+    private static final String TAG = SmsReceiver.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
-    private SMSDeliver mSmsDeliver;
-    private SMSReceiver mSmsReceiver;
+    private SmsDeliver mSmsDeliver;
+    private SmsReceiver mSmsReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
                         .setConstraints(constraints)
                         .build();*/
 
-        mSmsReceiver = new SMSReceiver(this);
+        mSmsReceiver = new SmsReceiver(this);
         try {
             Log.d(TAG, Boolean.toString(mSmsReceiver.addListener(this)));
         }
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
         }
 
 
-        mSmsDeliver = new SMSDeliver(this);
+        mSmsDeliver = new SmsDeliver(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     protected void onStart()
     {
         super.onStart();
-
     }
 
     @Override
@@ -148,20 +146,10 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
 
     private void addLocation(GTSmsLocation pSmsLoc)
     {
-        Location loc = pSmsLoc.getLocation1();
-
-        double lat = loc.getLatitude();
-        double lon = loc.getLongitude();
-
-        //Save new data
-        ContentValues locationValues = new ContentValues();
-        locationValues.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT, String.valueOf(lat));
-        locationValues.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG, String.valueOf(lon));
-
-        // Finally, insert location data into the database.
+        // Insert location data into the database.
         Uri insertedUri = getContentResolver().insert(
                 GpsTrackerContract.LocationEntry.CONTENT_URI,
-                locationValues
+                pSmsLoc.toContentValues()
         );
     }
 
@@ -172,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements SMSReceiver.Liste
     }
 
     @Override
-    public SMSDeliver getSmsDeliver()
+    public SmsDeliver getSmsDeliver()
     {
         return mSmsDeliver;
     }

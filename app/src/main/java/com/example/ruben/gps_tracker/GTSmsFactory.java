@@ -2,13 +2,17 @@ package com.example.ruben.gps_tracker;
 
 public class GTSmsFactory
 {
-
     public GTSms getSms(String smsBody)
     {
-        String smsCode = smsBody.substring(GTSmsFormat.Location.Code.ordinal(), GTSmsFormat.Location.Code.ordinal());
+        if (smsBody.length() == 0)
+        {
+            return null;
+        }
+        String smsCode = smsBody.substring(GTSmsFormat.Location.Code.ordinal(), GTSmsFormat.Location.Credit0.ordinal());
         GTSms.SmsCode code = GTSms.SmsCode.valueOf(smsCode);
 
-        if(code == null){
+        if(code == null)
+        {
             return null;
         }
         if(code == GTSms.SmsCode.S)
@@ -26,6 +30,10 @@ public class GTSmsFactory
         else if(code == GTSms.SmsCode.R)
         {
             return new GTSmsRefresh(smsBody);
+        }
+        else if(code == GTSms.SmsCode.L)
+        {
+            return new GTSmsLocation(smsBody);
         }
 
         return null;

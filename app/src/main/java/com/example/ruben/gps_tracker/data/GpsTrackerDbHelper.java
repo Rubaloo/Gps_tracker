@@ -20,8 +20,19 @@ public class GpsTrackerDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_LOCATION_TABLE = "CREATE TABLE " + LocationEntry.TABLE_NAME + " (" +
                 LocationEntry._ID + " INTEGER PRIMARY KEY," +
-                LocationEntry.COLUMN_COORD_LAT + " REAL NOT NULL, " +
-                LocationEntry.COLUMN_COORD_LONG + " REAL NOT NULL " +
+                LocationEntry.COLUMN_STATUS + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_CREDIT + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_SPEED + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_BATTERY + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LAT_1 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG_1 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LAT_2 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG_2 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LAT_3 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG_3 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LAT_4 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_COORD_LONG_4 + " INTEGER NOT NULL, " +
+                LocationEntry.COLUMN_TIMESTAMP + " TEXT NOT NULL " +
                 " );";
         // Create a table to hold locations.  A location consists of the string supplied in the
         // location setting, the city name, and the latitude and longitude

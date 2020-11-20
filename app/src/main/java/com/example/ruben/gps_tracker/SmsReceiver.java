@@ -3,7 +3,6 @@ package com.example.ruben.gps_tracker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,24 +11,26 @@ import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.example.ruben.gps_tracker.data.GpsTrackerContract;
+import com.example.ruben.gps_tracker.data.GpsTrackerDbHelper;
+import com.example.ruben.gps_tracker.data.GpsTrackerDbUtils;
+import com.example.ruben.gps_tracker.data.GpsTrackerProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SMSReceiver extends BroadcastReceiver
+public class SmsReceiver extends BroadcastReceiver
 {
-    private static final String TAG = SMSReceiver.class.getSimpleName();
+    private static final String TAG = SmsReceiver.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_RECEIVE_SMS = 1;
     private List<Listener> mListeners;
     private GTPermissionChecker mReceiveSMSPC;
     private ActivityReceiver mActivityReceiver;
 
-    public SMSReceiver()
+    public SmsReceiver()
     {
     }
 
-    public SMSReceiver(Activity pActivity)
+    public SmsReceiver(Activity pActivity)
     {
         mActivityReceiver = (ActivityReceiver) pActivity;
         mListeners = new ArrayList<Listener>();
@@ -53,8 +54,7 @@ public class SMSReceiver extends BroadcastReceiver
                     smsBody += smsMessage.getMessageBody();
                 }
             }
-            else
-                {
+            else {
                 Bundle smsBundle = intent.getExtras();
                 if (smsBundle != null)
                 {
@@ -74,19 +74,31 @@ public class SMSReceiver extends BroadcastReceiver
                     smsSender = messages[0].getOriginatingAddress();
                 }
             }
-        }
+            GTSmsFactory smsFactory = new GTSmsFactory();
+            GTSms receivedSMS = smsFactory.getSms(smsBody);
+            GpsTrackerDbUtils dbUtils = new GpsTrackerDbUtils();
+            switch (receivedSMS.getCode())
+            {
+                case A:
+                    Log.d(TAG, "AlarmSMS received");
+                    break;
+                case L:
+                    Log.d(TAG, "LocationSMS received");
+                    dbUtils.insert(receivedSMS, context);
+                    break;
+                case W:
+                    Log.d(TAG, "WarningSMS received");
+                    break;
+                case R:
+                    Log.d(TAG, "RefreshSMS received");
+                    break;
+                case S:
+                    Log.d(TAG, "SettingsSMS received");
+                    break;
+                default:
+                    Log.e(TAG, "Unkown SMS received");
+            }
 
-        //TODO: Parse sms content (by now Default insert when a sms is received)
-        ContentValues cv = new ContentValues(2);
-        cv.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LAT, 10);
-        cv.put(GpsTrackerContract.LocationEntry.COLUMN_COORD_LONG, 1000);
-
-        try {
-            context.getContentResolver().insert(GpsTrackerContract.LocationEntry.CONTENT_URI, cv);
-        }
-        catch (Exception e)
-        {
-            Log.d(TAG, e.getMessage());
         }
     }
 

@@ -19,7 +19,7 @@
         android:theme="@style/AppTheme">
 
         <receiver
-            android:name=".SMSReceiver"
+            android:name=".SmsReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

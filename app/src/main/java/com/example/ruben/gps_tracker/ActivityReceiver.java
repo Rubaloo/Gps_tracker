@@ -6,6 +6,6 @@ import android.content.ContentResolver;
 public interface ActivityReceiver
 {
     Activity getActivity();
-    SMSDeliver getSmsDeliver();
+    SmsDeliver getSmsDeliver();
     ContentResolver getCntentResolver();
 }

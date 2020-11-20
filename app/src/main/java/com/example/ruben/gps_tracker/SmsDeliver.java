@@ -12,8 +12,8 @@ import android.telephony.SmsManager;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SMSDeliver {
-    private static final String TAG = SMSReceiver.class.getSimpleName();
+public class SmsDeliver {
+    private static final String TAG = SmsReceiver.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 0;
     private static final int GT_SMS_MAX_LENGHT = 160;
 
@@ -22,7 +22,7 @@ public class SMSDeliver {
     private GTPermissionChecker mSendSmsPC;
     private ActivityReceiver mActivityReceiver;
 
-    public SMSDeliver(Activity pActivity)
+    public SmsDeliver(Activity pActivity)
     {
         mActivityReceiver = (ActivityReceiver) pActivity;
         mSendSmsPC = new GTPermissionChecker(pActivity, Manifest.permission.SEND_SMS, MY_PERMISSIONS_REQUEST_SEND_SMS);
