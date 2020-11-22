@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -70,6 +69,10 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
                 p.parse(RESTUriParser.URL_TEST);
             }
         });
+
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -90,6 +93,14 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     {
         super.onStart();
         createNotificationChannel();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -132,8 +143,6 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     public Resources.Theme getTheme() {
         SharedPreferences sharedPref =
                 PreferenceManager.getDefaultSharedPreferences(this);
-
-        sharedPref.registerOnSharedPreferenceChangeListener(this);
         String uiModeKey =  this.getString(R.string.preference_key_ui_mode);
         String uiMode = sharedPref.getString(uiModeKey, getString(R.string.preference_value_ui_mode_quite));
         String alertMode = getString(R.string.preference_value_ui_mode_alert);
@@ -179,6 +188,17 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         return this.getContentResolver();
     }
 
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(getString(R.string.preference_key_ui_mode)))
+        {
+            Intent intent = getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+            startActivity(intent);
+        }
+    }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -196,14 +216,4 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         }
     }
 
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.preference_key_ui_mode)))
-        {
-            Intent intent = getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            finish();
-            startActivity(intent);
-        }
-    }
 }
