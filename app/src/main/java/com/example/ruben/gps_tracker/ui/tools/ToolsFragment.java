@@ -47,6 +47,7 @@ public class ToolsFragment extends PreferenceFragmentCompat
         mVisualAlarmPreference = findPreference(getString(R.string.preference_key_visual_alarm));
         mAudioAlarmPreference = findPreference(getString(R.string.preference_key_sound_alarm));
 
+
         Preference save_button = findPreference(getString(R.string.settings_key_save_button));
         save_button.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener()
         {

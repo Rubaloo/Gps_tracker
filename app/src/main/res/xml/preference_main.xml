@@ -31,6 +31,8 @@
         app:key="@string/settings_key_save_button"
         app:summary="@string/settings_summary_save_button"/>
 
-
+    <Preference
+        app:defaultValue="@string/preference_default_ui_mode"
+        app:key="@string/preference_key_ui_mode" />
 
 </PreferenceScreen>

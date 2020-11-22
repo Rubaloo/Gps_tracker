@@ -41,9 +41,17 @@
     <string name="preference_key_sound_alarm">preference_key_sound_alarm</string>
     <string name="preference_title_sound_alarm">Sound alarm</string>
 
+    <string name="preference_key_ui_mode">preference_key_ui_mode</string>
+    <string name="preference_default_ui_mode">@string/preference_value_ui_mode_quite</string>
+    <string name="preference_value_ui_mode_quite">quite</string>
+    <string name="preference_value_ui_mode_alert">alert</string>
+
     <string name="settings_title_save_button">Save button</string>
     <string name="settings_key_save_button">settings_key_save_button</string>
     <string name="settings_summary_save_button">Updates gps tracker configuration</string>
 
     <string name="toast_sending_message">Sending message</string>
+    <string name="channel_name">gps_tracker_channel</string>
+    <string name="channel_description">Notify user about warnings</string>
+    <string name="CHANNEL_ID">gps_tracker_channel_id</string>
 </resources>

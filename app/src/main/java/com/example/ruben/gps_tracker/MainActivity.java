@@ -1,11 +1,14 @@
 package com.example.ruben.gps_tracker;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentResolver;
-import android.content.ContentValues;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,12 +22,13 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.preference.PreferenceManager;
 
 import com.example.ruben.gps_tracker.data.GpsTrackerContract;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements SmsReceiver.Listener, ActivityReceiver {
+public class MainActivity extends AppCompatActivity implements SmsReceiver.Listener, ActivityReceiver, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = SmsReceiver.class.getSimpleName();
     private AppBarConfiguration mAppBarConfiguration;
     private SmsDeliver mSmsDeliver;
@@ -33,18 +37,6 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        /*// Create a Constraints object that defines when the task should run
-        Constraints constraints = new Constraints.Builder()
-                .set
-                .setRequiresCharging(true)
-                .build();
-
-        OneTimeWorkRequest compressionWork =
-                new OneTimeWorkRequest.Builder(CompressWorker.class)
-                        .setConstraints(constraints)
-                        .build();*/
 
         mSmsReceiver = new SmsReceiver(this);
         try {
@@ -60,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
@@ -98,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     protected void onStart()
     {
         super.onStart();
+        createNotificationChannel();
     }
 
     @Override
@@ -136,6 +128,22 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         Toast.makeText(MainActivity.this, "sms received", Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public Resources.Theme getTheme() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
+        String uiModeKey =  this.getString(R.string.preference_key_ui_mode);
+        String uiMode = sharedPref.getString(uiModeKey, getString(R.string.preference_value_ui_mode_quite));
+        String alertMode = getString(R.string.preference_value_ui_mode_alert);
+        int themeResId = (uiMode.equals(alertMode)) ? R.style.AppTheme_Alarm : R.style.AppTheme_NoActionBar;
+
+        Resources.Theme theme = super.getTheme();
+        theme.applyStyle(themeResId, true);
+        return theme;
+    }
+
     private void dispatch(GTSms pSms)
     {
         if(pSms instanceof GTSmsLocation)
@@ -169,5 +177,33 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     public ContentResolver getCntentResolver()
     {
         return this.getContentResolver();
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            String id = getString(R.string.CHANNEL_ID);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(id, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if(key.equals(getString(R.string.preference_key_ui_mode)))
+        {
+            Intent intent = getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+            startActivity(intent);
+        }
     }
 }
