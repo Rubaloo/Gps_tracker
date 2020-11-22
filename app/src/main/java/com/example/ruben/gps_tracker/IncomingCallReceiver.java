@@ -51,7 +51,7 @@ public class IncomingCallReceiver extends PhoneCallReceiver
 
         if(number.equals(trackerPhone))
         {
-            String uiModeKey = sharedPref.getString(ctx.getString(R.string.preference_key_ui_mode), "preference_key_ui_mode");
+            String uiModeKey = ctx.getString(R.string.preference_key_ui_mode);
             String uiModeAlert = sharedPref.getString(ctx.getString(R.string.preference_value_ui_mode_alert), "alert");
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString(uiModeKey, uiModeAlert);

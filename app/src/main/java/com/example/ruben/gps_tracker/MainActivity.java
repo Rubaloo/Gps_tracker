@@ -1,5 +1,6 @@
 package com.example.ruben.gps_tracker;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -41,9 +42,7 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         mSmsReceiver = new SmsReceiver(this);
         try {
             Log.d(TAG, Boolean.toString(mSmsReceiver.addListener(this)));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Log.d(TAG, e.getMessage());
         }
 
@@ -70,9 +69,17 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
             }
         });
 
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPref.registerOnSharedPreferenceChangeListener(this);
+        FloatingActionButton quiet = findViewById(R.id.quiet);
+        quiet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPref =
+                        PreferenceManager.getDefaultSharedPreferences(v.getContext());
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(getString(R.string.preference_key_ui_mode), getString(R.string.preference_value_ui_mode_quite));
+                editor.apply();
+            }
+        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -89,10 +96,20 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     }
 
     @Override
-    protected void onStart()
-    {
+    protected void onStart() {
         super.onStart();
         createNotificationChannel();
+    }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FloatingActionButton quiet = findViewById(R.id.quiet);
+        quiet.setVisibility((isAlertMode()) ? View.VISIBLE : View.GONE);
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -104,33 +121,28 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
-    public boolean onSupportNavigateUp()
-    {
+    public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         mSmsDeliver.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
-    public void onSmsReceived(String address, String body)
-    {
+    public void onSmsReceived(String address, String body) {
         GTSms sms = null;
-        if(address.equals(R.string.preference_key_tracker_phone_number))
-        {
+        if (address.equals(R.string.preference_key_tracker_phone_number)) {
             GTSmsFactory fct = new GTSmsFactory();
             sms = fct.getSms(body);
             dispatch(sms);
@@ -141,28 +153,19 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
 
     @Override
     public Resources.Theme getTheme() {
-        SharedPreferences sharedPref =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        String uiModeKey =  this.getString(R.string.preference_key_ui_mode);
-        String uiMode = sharedPref.getString(uiModeKey, getString(R.string.preference_value_ui_mode_quite));
-        String alertMode = getString(R.string.preference_value_ui_mode_alert);
-        int themeResId = (uiMode.equals(alertMode)) ? R.style.AppTheme_Alarm : R.style.AppTheme_NoActionBar;
-
+        Integer themeResId = (isAlertMode()) ? R.style.AppTheme_Alarm : R.style.AppTheme_NoActionBar;
         Resources.Theme theme = super.getTheme();
         theme.applyStyle(themeResId, true);
         return theme;
     }
 
-    private void dispatch(GTSms pSms)
-    {
-        if(pSms instanceof GTSmsLocation)
-        {
+    private void dispatch(GTSms pSms) {
+        if (pSms instanceof GTSmsLocation) {
             addLocation((GTSmsLocation) pSms);
         }
     }
 
-    private void addLocation(GTSmsLocation pSmsLoc)
-    {
+    private void addLocation(GTSmsLocation pSmsLoc) {
         // Insert location data into the database.
         Uri insertedUri = getContentResolver().insert(
                 GpsTrackerContract.LocationEntry.CONTENT_URI,
@@ -171,27 +174,23 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
     }
 
     @Override
-    public Activity getActivity()
-    {
+    public Activity getActivity() {
         return this;
     }
 
     @Override
-    public SmsDeliver getSmsDeliver()
-    {
+    public SmsDeliver getSmsDeliver() {
         return mSmsDeliver;
     }
 
     @Override
-    public ContentResolver getCntentResolver()
-    {
+    public ContentResolver getCntentResolver() {
         return this.getContentResolver();
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if(key.equals(getString(R.string.preference_key_ui_mode)))
-        {
+        if (key.equals(getString(R.string.preference_key_ui_mode))) {
             Intent intent = getIntent();
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             finish();
@@ -216,4 +215,22 @@ public class MainActivity extends AppCompatActivity implements SmsReceiver.Liste
         }
     }
 
+    enum UIMode {
+        Quiet,
+        Alert
+    }
+
+    private UIMode getUIMode() {
+        SharedPreferences sharedPref =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        String uiModeKey = this.getString(R.string.preference_key_ui_mode);
+        String uiMode = sharedPref.getString(uiModeKey, getString(R.string.preference_value_ui_mode_quite));
+        String alertMode = getString(R.string.preference_value_ui_mode_alert);
+        return (uiMode.equals(alertMode)) ? UIMode.Alert : UIMode.Quiet;
+    }
+
+    public boolean isAlertMode()
+    {
+        return getUIMode().equals(UIMode.Alert);
+    }
 }
