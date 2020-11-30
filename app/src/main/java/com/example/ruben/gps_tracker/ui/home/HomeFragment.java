@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,11 +24,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
@@ -93,12 +99,32 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         ArrayList<PointF> lastPositions = mHomeViewModel.getTrackerPath().getValue();
         if(lastPositions != null && lastPositions.size() != 0)
         {
-            for (PointF point : lastPositions)
+            PolylineOptions options = new PolylineOptions();
+            options.color(Color.BLUE);
+
+            ListIterator<PointF> iterator = lastPositions.listIterator();
+            while (iterator.hasNext())
             {
+                PointF prevPoint =  (iterator.hasPrevious()) ? lastPositions.get(iterator.previousIndex()) : null;
+                PointF point = iterator.next();
                 LatLng pos = new LatLng(point.x, point.y);
+                String markerTitle = "";
+                BitmapDescriptor bdes;
+                if (iterator.hasNext()) {
+                    bdes = getMarkerIcon(Color.BLUE);
+                }
+                else { //last point
+                    bdes = getMarkerIcon(Color.RED);
+                    markerTitle = "Last location";
+                }
+                options.add(pos);
                 mMap.addMarker(new MarkerOptions().position(pos)
-                        .title("MArker 1"));
+                        .title(markerTitle)
+                        .icon(bdes));
             }
+
+            mMap.addPolyline(options);
+
 
             PointF cameraFocus = (!lastPositions.isEmpty()) ? lastPositions.get(lastPositions.size() - 1) : new PointF(37.4219999f, -122.0862462f);
             CameraPosition googlePlex = CameraPosition.builder()
@@ -134,6 +160,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
 
         return mCoords;
+    }
+
+    // method definition
+    public BitmapDescriptor getMarkerIcon(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
     }
 
 }
